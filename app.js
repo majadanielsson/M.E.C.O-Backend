@@ -1,9 +1,11 @@
 var createError = require('http-errors');
 var express = require('express');
-require('dotenv').config();
+// Adds environment variables, only in development
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const authentication = require('./middleware/authentication.js');
 const mongoose = require('mongoose');
 mongoose.connect(`mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@meco-ju6ws.mongodb.net/test?retryWrites=true&w=majority`, {
   useNewUrlParser: true,
@@ -24,6 +26,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({
@@ -31,7 +34,8 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+// Adds user info to req.user
+app.use(authentication());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/cas', casRouter);
