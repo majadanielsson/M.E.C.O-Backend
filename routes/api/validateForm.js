@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const { body, validationResult } = require("express-validator");
+const blacklist = "{}$";
 
 // @route     GET api/validateForm
 // @desc      Test route
@@ -14,11 +15,21 @@ router.get("/", function (req, res, next) {
 router.post(
   "/",
   [
-    body("name", "Empty name").isLength({ min: 1 }),
-    body("age", "Invalid age").optional({ checkFalsy: true }).isISO8601(),
-    body("text").not().isEmpty().trim().escape(),
-    body("fråga1").not().isEmpty().withMessage("Skriv nånting"),
-    body("fråga2").not().isEmpty().withMessage("Skriv nånting"),
+    body("courseCode", "Invalid input")
+      .trim()
+      .escape()
+      .blacklist(blacklist)
+      .isEmpty(),
+    body("question1", "Invalid input")
+      .trim()
+      .escape()
+      .blacklist(blacklist)
+      .isEmpty(),
+    body("question2", "Invalid input")
+      .trim()
+      .escape()
+      .blacklist(blacklist)
+      .isEmpty(),
   ],
   (req, res, next) => {
     // Extract the validation errors from a request.
@@ -27,6 +38,7 @@ router.post(
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
       // Error messages can be returned in an array using `errors.array()`.
+      return res.status(422).json({ errors: errors.array() });
     } else {
       // Data from form is valid. Store in database
     }
