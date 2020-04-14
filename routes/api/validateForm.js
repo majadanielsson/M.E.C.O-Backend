@@ -1,7 +1,6 @@
 var express = require("express");
 var router = express.Router();
 const { body, validationResult } = require("express-validator");
-const { sanitizeBody } = require("express-validator");
 
 // @route     GET api/validateForm
 // @desc      Test route
@@ -17,8 +16,7 @@ router.post(
   [
     body("name", "Empty name").isLength({ min: 1 }),
     body("age", "Invalid age").optional({ checkFalsy: true }).isISO8601(),
-    sanitizeBody("name").trim().escape(),
-    sanitizeBody("date").toDate(),
+    body("text").not().isEmpty().trim().escape(),
   ],
   (req, res, next) => {
     // Extract the validation errors from a request.
