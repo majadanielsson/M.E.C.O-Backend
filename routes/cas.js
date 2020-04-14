@@ -13,7 +13,7 @@ router.get('/login', function(req, res) {
   });
   const query = {
     ticket: req.query.ticket.substring(0, 400),
-    service: `${(process.env.NODE_ENV == 'production') ? "https" : req.protocol}://${req.hostname}/cas/login`
+    service: `${(process.env.NODE_ENV == 'production') ? "https" : req.protocol}://${req.get("host")}/cas/login`
   };
   fetch(`${cas}/validate?${querystring.encode(query)}`)
     .then(response => response.text())
@@ -58,7 +58,7 @@ router.get('/redirect', function(req, res) {
 // Redirects to CAS logout page
 router.get('/logout', function(req, res) {
   const query = {
-    service: `${(process.env.NODE_ENV == 'production') ? "https" : req.protocol}://${req.hostname}/cas/login`
+    service: `${(process.env.NODE_ENV == 'production') ? "https" : req.protocol}://${req.get("host")}/cas/login`
   };
   res.redirect(`${cas}/logout?${querystring.encode(query)}`);
 });
