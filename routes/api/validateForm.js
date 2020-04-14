@@ -17,6 +17,8 @@ router.post(
     body("name", "Empty name").isLength({ min: 1 }),
     body("age", "Invalid age").optional({ checkFalsy: true }).isISO8601(),
     body("text").not().isEmpty().trim().escape(),
+    body("fråga1").not().isEmpty().withMessage("Skriv nånting"),
+    body("fråga2").not().isEmpty().withMessage("Skriv nånting"),
   ],
   (req, res, next) => {
     // Extract the validation errors from a request.
