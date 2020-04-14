@@ -8,8 +8,7 @@ var logger = require("morgan");
 const authentication = require("./middleware/authentication.js");
 const mongoose = require("mongoose");
 mongoose.connect(
-  `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@meco-ju6ws.mongodb.net/test?retryWrites=true&w=majority`,
-  {
+  `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@meco-ju6ws.mongodb.net/test?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   }
@@ -17,7 +16,7 @@ mongoose.connect(
 
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "Database connection error:"));
-db.once("open", function () {
+db.once("open", function() {
   console.log("Connected to database");
 });
 
@@ -43,19 +42,20 @@ app.use(
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, "public")));
-
+// Adds user info to req.user
+app.use(authentication());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/cas", casRouter);
 app.use("api/validateForm", validationRouter);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
