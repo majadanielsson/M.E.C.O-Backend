@@ -1,9 +1,11 @@
 var createError = require("http-errors");
 var express = require("express");
-require("dotenv").config();
+// Adds environment variables, only in development
+if (process.env.NODE_ENV !== "production") require("dotenv").config();
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const authentication = require("./middleware/authentication.js");
 const mongoose = require("mongoose");
 mongoose.connect(
   `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@meco-ju6ws.mongodb.net/test?retryWrites=true&w=majority`,
@@ -12,13 +14,16 @@ mongoose.connect(
     useUnifiedTopology: true,
   }
 );
+
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "Database connection error:"));
 db.once("open", function () {
   console.log("Connected to database");
 });
+
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var casRouter = require("./routes/cas");
 var validationRouter = require("./routes/api/validateForm");
 
 var app = express();
@@ -28,6 +33,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
 app.use(logger("dev"));
+
 app.use(express.json());
 app.use(
   express.urlencoded({
@@ -35,10 +41,12 @@ app.use(
   })
 );
 app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/cas", casRouter);
 app.use("api/validateForm", validationRouter);
 
 // catch 404 and forward to error handler
