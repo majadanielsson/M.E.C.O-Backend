@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
-const { body, validationResult } = require("express-validator/check");
-const { sanitizeBody } = require("express-validator/filter");
+const { body, validationResult } = require("express-validator");
+const { sanitizeBody } = require("express-validator");
 
 // @route     GET api/validateForm
 // @desc      Test route
