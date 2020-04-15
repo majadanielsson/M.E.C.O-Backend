@@ -2,7 +2,6 @@ var jwt = require('jsonwebtoken');
 
 module.exports = function() {
   return function(req, res, next) {
-    console.log(req.cookies);
     if (req.cookies.access_token && req.cookies.access_token.split(" ")[0] == "Bearer") {
       try {
         var token = req.cookies.access_token.split(" ")[1];
