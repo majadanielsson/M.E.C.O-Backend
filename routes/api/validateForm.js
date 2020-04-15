@@ -31,7 +31,7 @@ router.post(
       .blacklist(blacklist)
       .isEmpty(),
   ],
-  (req, res, next) => {
+  async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
 
@@ -41,6 +41,21 @@ router.post(
       return res.status(422).json({ errors: errors.array() });
     } else {
       // Data from form is valid. Store in database
+      try {
+        const { courseCode, question1, question2 } = req.body;
+        const newReport = new Report({
+          courseCode: courseCode,
+          //author: req.user.id,
+          //date: getDate();
+          question1: question1,
+          question2: question2,
+        });
+        const report = await newReport.save();
+        res.json(report);
+      } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
+      }
     }
   }
 );
