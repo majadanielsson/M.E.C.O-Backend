@@ -7,10 +7,10 @@ const blacklist = "{}$";
 // @desc      Test route
 // @access    Public
 router.get("/", function (req, res, next) {
-  res.send("respond with a resource");
+  res.send("hej maja");
 });
 // @route    POST api/users
-// @desc     Register user
+// @desc     Posts form
 // @access   Public
 router.post(
   "/",

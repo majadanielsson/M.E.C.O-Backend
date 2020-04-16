@@ -5,14 +5,28 @@ if (process.env.NODE_ENV !== "production") require("dotenv").config();
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-var authentication = require("./middleware/authentication.js");
+
+const authentication = require("./middleware/authentication.js");
 var cors = require("./middleware/cors.js");
-var db = require("./mongoose.js");
+const mongoose = require("mongoose");
+mongoose.connect(
+  `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@meco-ju6ws.mongodb.net/test?retryWrites=true&w=majority`,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
+
+var db = mongoose.connection;
+db.on("error", console.error.bind(console, "Database connection error:"));
+db.once("open", function () {
+  console.log("Connected to database");
+});
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var casRouter = require("./routes/cas");
-var validationRouter = require("./routes/api/validateForm");
+var formRouter = require("./routes/api/Form");
 
 var app = express();
 
@@ -37,15 +51,15 @@ app.use(authentication());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/cas", casRouter);
-app.use("api/validateForm", validationRouter);
+app.use("/api/form", formRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
