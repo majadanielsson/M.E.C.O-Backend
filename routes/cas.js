@@ -5,15 +5,25 @@ const cas = "https://weblogin.uu.se/idp/profile/cas"; // CAS server URL
 const querystring = require('querystring');
 var jwt = require('jsonwebtoken');
 
-// Checks the ticket against the CAS server, returns JWT
 router.get('/login', function(req, res) {
-  if (!req.query.ticket) res.status(400).json({
+  if (req.user) res.json({
+    username: req.user.username
+  });
+  else res.status(403).json({
+    message: "Invalid authentication",
+    detail: "Invalid JWT token"
+  });
+});
+
+// Checks the ticket against the CAS server, returns JWT
+router.post('/login', function(req, res) {
+  if (!req.body.ticket) res.status(400).json({
     message: "Not logged in",
     detail: "Missing ticket"
   });
   const query = {
-    ticket: req.query.ticket.substring(0, 400),
-    service: `${(process.env.NODE_ENV == 'production') ? "https" : req.protocol}://${req.get("host")}/cas/login`
+    ticket: req.body.ticket.substring(0, 400),
+    service: "http://localhost:3000/login/"
   };
   fetch(`${cas}/validate?${querystring.encode(query)}`)
     .then(response => response.text())
@@ -44,15 +54,6 @@ router.get('/login', function(req, res) {
         detail: "Ticket validation failed"
       });
     })
-});
-
-
-// Redirects to CAS login page
-router.get('/redirect', function(req, res) {
-  const query = {
-    service: `${req.protocol}://${req.get('host')}/cas/login`
-  };
-  res.redirect(`${cas}/login?${querystring.encode(query)}`);
 });
 
 // Redirects to CAS logout page

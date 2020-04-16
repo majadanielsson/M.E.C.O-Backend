@@ -5,20 +5,9 @@ if (process.env.NODE_ENV !== "production") require("dotenv").config();
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-const authentication = require("./middleware/authentication.js");
-const mongoose = require("mongoose");
-mongoose.connect(
-  `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@meco-ju6ws.mongodb.net/test?retryWrites=true&w=majority`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
-);
-
-var db = mongoose.connection;
-db.on("error", console.error.bind(console, "Database connection error:"));
-db.once("open", function() {
-  console.log("Connected to database");
-});
+var authentication = require("./middleware/authentication.js");
+var cors = require("./middleware/cors.js");
+var db = require("./mongoose.js");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -40,7 +29,8 @@ app.use(
   })
 );
 app.use(cookieParser());
-
+// Allow localhost
+app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 // Adds user info to req.user
 app.use(authentication());
