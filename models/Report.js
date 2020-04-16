@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const ReportSchema = new mongoose.Schema({
-  kurskod: {
+  courseCode: {
     type: String,
     required: true,
   },
