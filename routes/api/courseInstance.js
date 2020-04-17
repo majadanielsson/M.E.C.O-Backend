@@ -10,14 +10,12 @@ const Report = require("../../models/Report");
 router.get("/", async function (req, res, next) {
   try {
     const report = await Report.findById(req.params.id);
-    res.send(report);
 
     // Check for ObjectId format and post
     //if (!req.params.id.match(/^[0-9a-fA-F]{24}$/) || !report) {
     //return res.status(404).json({ msg: "Report not found" });
     //}
     res.json(report);
-    res.send("Got report");
   } catch (err) {
     console.error(err.message);
 
@@ -57,10 +55,10 @@ router.post(
     } else {
       // Data from form is valid. Store in database
       try {
-        const { courseCode, question1, question2 } = req.body;
+        const { courseCode, author, question1, question2 } = req.body;
         const newReport = new Report({
           courseCode: courseCode,
-          //author: req.user.id,
+          author: author,
           //date: getDate();
           question1: question1,
           question2: question2,
