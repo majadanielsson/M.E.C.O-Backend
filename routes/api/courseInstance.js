@@ -51,11 +51,15 @@ router.post(
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
       // Error messages can be returned in an array using `errors.array()`.
+      console.log("här inne");
       return res.status(422).json({ errors: errors.array() });
     } else {
       // Data from form is valid. Store in database
+      console.log("I else");
+      const { courseCode, author, question1, question2 } = req.body;
+      console.log(author);
       try {
-        const { courseCode, author, question1, question2 } = req.body;
+        console.log(courseCode);
         const newReport = new Report({
           courseCode: courseCode,
           author: author,
