@@ -58,10 +58,7 @@ router.post('/login', function(req, res) {
 
 // Redirects to CAS logout page
 router.get('/logout', function(req, res) {
-  const query = {
-    service: `${(process.env.NODE_ENV == 'production') ? "https" : req.protocol}://${req.get("host")}/cas/login`
-  };
-  res.redirect(`${cas}/logout?${querystring.encode(query)}`);
+  res.clearCookie("access_token").end();
 });
 
 // Create fake JWT
