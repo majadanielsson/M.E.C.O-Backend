@@ -67,6 +67,7 @@ router.post(
         });
         const report = await newReport.save();
         res.json(report);
+        console.log("Report posted to DB");
       } catch (err) {
         console.error(err.message);
         res.status(500).send("Server Error");
