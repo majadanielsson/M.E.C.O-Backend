@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== "production") require("dotenv").config();
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-
+var bodyParser = require("body-parser");
 const authentication = require("./middleware/authentication.js");
 var cors = require("./middleware/cors.js");
 const mongoose = require("mongoose");
@@ -35,7 +35,17 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
 app.use(logger("dev"));
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
 
+// parse application/json
+app.use(bodyParser.json());
+
+app.use(function (req, res) {
+  res.setHeader("Content-Type", "text/plain");
+  res.write("you posted:\n");
+  res.end(JSON.stringify(req.body, null, 2));
+});
 app.use(express.json());
 app.use(
   express.urlencoded({
