@@ -32,6 +32,7 @@ router.get("/", urlencodedParser, async function (req, res, next) {
 // @desc     Posts form
 // @access   Public
 router.post(
+  /*
   "/",
   [
     body("courseCode", "Invalid input")
@@ -49,7 +50,7 @@ router.post(
       .escape()
       .blacklist(blacklist)
       .isEmpty(),
-  ],
+  ],*/
   jsonParser,
   async (req, res, next) => {
     // Extract the validation errors from a request.
