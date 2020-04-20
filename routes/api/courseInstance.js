@@ -34,21 +34,23 @@ router.get("/", urlencodedParser, async function (req, res, next) {
 router.post(
   "/",
   [
-    body("courseCode", "Invalid input")
+    body("courseCode", "Invalid input").trim().escape(),
+    body("question1.answer", "Invalid input")
       .trim()
       .escape()
-      .blacklist(blacklist)
-      .isEmpty(),
-    body("question1", "Invalid input")
+      .blacklist(blacklist),
+    body("question2.answer", "Invalid input")
       .trim()
       .escape()
-      .blacklist(blacklist)
-      .isEmpty(),
-    body("question2", "Invalid input")
+      .blacklist(blacklist),
+    body("question3.answer", "Invalid input")
       .trim()
       .escape()
-      .blacklist(blacklist)
-      .isEmpty(),
+      .blacklist(blacklist),
+    body("question4.answer", "Invalid input")
+      .trim()
+      .escape()
+      .blacklist(blacklist),
   ],
   jsonParser,
   async (req, res, next) => {
@@ -62,7 +64,7 @@ router.post(
       return res.status(422).json({ errors: errors.array() });
     } else {
       // Data from form is valid. Store in database
-
+      console.log(req.body);
       const {
         courseCode,
         author,
