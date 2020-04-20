@@ -1,16 +1,22 @@
 var express = require("express");
+var bodyParser = require("body-parser");
 var router = express.Router();
 const { body, validationResult } = require("express-validator");
 const blacklist = "{}$";
 const Report = require("../../models/Report");
 
+// create application/json parser
+var jsonParser = bodyParser.json();
+
+// create application/x-www-form-urlencoded parser
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
 // @route     GET api/courseInstance
 // @desc      Test route
 // @access    Public
-router.get("/", async function (req, res, next) {
+router.get("/", urlencodedParser, async function (req, res, next) {
   try {
-    const report = await Report.findById(req.params.id);
-
+    const report = await Report.find();
     // Check for ObjectId format and post
     //if (!req.params.id.match(/^[0-9a-fA-F]{24}$/) || !report) {
     //return res.status(404).json({ msg: "Report not found" });
@@ -44,6 +50,7 @@ router.post(
       .blacklist(blacklist)
       .isEmpty(),
   ],
+  jsonParser,
   async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
@@ -51,21 +58,28 @@ router.post(
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
       // Error messages can be returned in an array using `errors.array()`.
-      console.log("här inne");
+      console.log("Found validation errors");
       return res.status(422).json({ errors: errors.array() });
     } else {
       // Data from form is valid. Store in database
-      console.log("I else");
-      const { courseCode, author, question1, question2 } = req.body;
-      console.log(author);
+
+      const {
+        courseCode,
+        author,
+        question1,
+        question2,
+        question3,
+        question4,
+      } = req.body;
+
       try {
-        console.log(courseCode);
         const newReport = new Report({
           courseCode: courseCode,
           author: author,
-          //date: getDate();
           question1: question1,
           question2: question2,
+          question3: question3,
+          question4: question4,
         });
         const report = await newReport.save();
         res.json(report);

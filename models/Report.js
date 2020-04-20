@@ -15,15 +15,20 @@ const ReportSchema = new mongoose.Schema({
     default: Date.now,
   },
   question1: {
-    type: String,
-    required: true,
+    question: { type: String, required: true },
+    answer: { type: String, required: true },
   },
   question2: {
-    type: String,
-    required: true,
+    question: { type: String, required: true },
+    answer: { type: String, required: true },
   },
-  optionalQuestion: {
-    type: String,
+  question3: {
+    question: { type: String, required: true },
+    answer: { type: String, required: true },
+  },
+  question4: {
+    question: { type: String, required: true },
+    answer: { type: String, required: true },
   },
 });
 

@@ -1,8 +1,11 @@
-var jwt = require('jsonwebtoken');
+var jwt = require("jsonwebtoken");
 
-module.exports = function() {
-  return function(req, res, next) {
-    if (req.cookies.access_token && req.cookies.access_token.split(" ")[0] == "Bearer") {
+module.exports = function () {
+  return function (req, res, next) {
+    if (
+      req.cookies.access_token &&
+      req.cookies.access_token.split(" ")[0] == "Bearer"
+    ) {
       try {
         var token = req.cookies.access_token.split(" ")[1];
         req.user = jwt.verify(token, process.env.JWT_SECRET);
@@ -11,10 +14,10 @@ module.exports = function() {
         console.log(`Invalid JWT token:\n${err}`);
         res.status(403).json({
           message: "Invalid authentication",
-          detail: "Invalid JWT token"
+          detail: "Invalid JWT token",
         });
       }
     }
-    next()
-  }
-}
+    next();
+  };
+};
