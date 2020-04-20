@@ -52,6 +52,7 @@ router.post(
       .escape()
       .blacklist(blacklist),
   ],
+
   jsonParser,
   async (req, res, next) => {
     // Extract the validation errors from a request.
