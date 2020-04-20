@@ -63,12 +63,8 @@ router.get('/logout', function(req, res) {
 
 // Create fake JWT
 router.post('/dev', function(req, res) {
-  var user = (req.body) ? JSON.decode(req.body) : {
-    username: "user1234"
-  };
-  var token = jwt.sign(user, process.env.JWT_SECRET);
-  res.cookie('access_token', `Bearer ${token}`).json({
-    username: user.username
-  });
+  console.log(req.body);
+  var token = jwt.sign(req.body, process.env.JWT_SECRET);
+  res.cookie('access_token', `Bearer ${token}`).json(req.body);
 });
 module.exports = router;
