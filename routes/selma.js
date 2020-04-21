@@ -5,10 +5,12 @@ const soap = require('soap');
 router.get('/', function(req, res, next) {
   var url = 'http://ws.selma7.its.uu.se/selmaws-uu/services/PlanTjanst?wsdl';
   var args = {
-    benamning: ''
+    benamning: '',
+    kurskod: '',
+    startveckaFrom: 202000
   };
   soap.createClient(url, function(err, client) {
-    client.sokKursplan(args, function(err, result) {
+    client.sokKursplanStartvecka(args, function(err, result) {
       console.log(result);
       res.send(result);
     });
