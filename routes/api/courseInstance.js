@@ -4,6 +4,7 @@ var router = express.Router();
 const { body, validationResult } = require("express-validator");
 const blacklist = "{}$";
 const Report = require("../../models/Report");
+const Course = require("../../models/Course");
 
 // create application/json parser
 var jsonParser = bodyParser.json();
@@ -16,10 +17,23 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 // @access    Public
 router.get("/", urlencodedParser, async function (req, res, next) {
   var courseCode = req.query.courseCode;
+  var courseID = req.query.courseID;
   //check if courseID was provided
-  if (!courseCode) {
+  if (courseID) {
+    // Get course by ID in course collection
     try {
-      const report = await Report.find();
+      const course = await Course.findById(courseID);
+
+      res.json(course);
+    } catch (err) {
+      console.error(err.message);
+
+      res.status(500).send("Server Error");
+    }
+  } else if (courseCode) {
+    // Get all instances of a single course in the reports collection
+    try {
+      const report = await Report.find({ courseCode: courseCode });
 
       res.json(report);
     } catch (err) {
@@ -29,9 +43,9 @@ router.get("/", urlencodedParser, async function (req, res, next) {
     }
   } else {
     try {
-      // Get all instances of a single course
+      // Get all entries in Courses
 
-      const report = await Report.find({ courseCode: courseCode });
+      const report = await Course.find();
 
       res.json(report);
     } catch (err) {
