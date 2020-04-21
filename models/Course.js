@@ -24,4 +24,9 @@ const CourseSchema = new mongoose.Schema({
   },
 });
 
+CourseSchema.index({
+  name: "text",
+  nameEng: "text"
+});
+
 module.exports = Report = mongoose.model("course", CourseSchema);
