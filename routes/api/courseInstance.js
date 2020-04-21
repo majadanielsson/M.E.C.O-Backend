@@ -15,17 +15,30 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 // @desc      Test route
 // @access    Public
 router.get("/", urlencodedParser, async function (req, res, next) {
-  try {
-    const report = await Report.find();
-    // Check for ObjectId format and post
-    //if (!req.params.id.match(/^[0-9a-fA-F]{24}$/) || !report) {
-    //return res.status(404).json({ msg: "Report not found" });
-    //}
-    res.json(report);
-  } catch (err) {
-    console.error(err.message);
+  var courseCode = req.query.courseCode;
+  //check if courseID was provided
+  if (!courseCode) {
+    try {
+      const report = await Report.find();
 
-    res.status(500).send("Server Error");
+      res.json(report);
+    } catch (err) {
+      console.error(err.message);
+
+      res.status(500).send("Server Error");
+    }
+  } else {
+    try {
+      // Get all instances of a single course
+
+      const report = await Report.find({ courseCode: courseCode });
+
+      res.json(report);
+    } catch (err) {
+      console.error(err.message);
+
+      res.status(500).send("Server Error");
+    }
   }
 });
 // @route    POST api/users
