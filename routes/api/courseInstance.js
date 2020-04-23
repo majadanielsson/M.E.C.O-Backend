@@ -84,7 +84,7 @@ router.post(
   async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
-
+    var courseID = req.query.courseID;
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
       // Error messages can be returned in an array using `errors.array()`.
@@ -111,6 +111,9 @@ router.post(
           question3: question3,
           question4: question4,
         });
+        const filter = { _id: courseID };
+        const update = { courseInstances: newReport };
+        let doc = await Course.findOneAndUpdate(filter, update);
         const report = await newReport.save();
         res.json(report);
         console.log("Report posted to DB");
