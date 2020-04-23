@@ -4,6 +4,7 @@ const Course = require("../models/Course");
 /* GET users listing. */
 router.get('/', async function(req, res, next) {
   const q = req.query.q.trim();
+  const page = (req.query.page) ? parseInt(req.query.page.trim()) : 0;
   try {
     const response = await Course.find({
       $or: [{
@@ -19,11 +20,11 @@ router.get('/', async function(req, res, next) {
       score: {
         $meta: "textScore"
       }
-    }).sort({
+    }).select("name nameEng extent extentUnit").sort({
       score: {
         $meta: "textScore"
       }
-    });
+    }).skip(20 * page).limit(20);
     res.json(response);
   } catch (err) {
     res.status(500).json("error");
