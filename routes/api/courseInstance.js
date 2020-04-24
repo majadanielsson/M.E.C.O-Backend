@@ -85,6 +85,7 @@ router.post(
     // Extract the validation errors from a request.
     const errors = validationResult(req);
     var courseID = req.query.courseID;
+    var instanceID = req.query.instanceID;
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
       // Error messages can be returned in an array using `errors.array()`.
@@ -93,21 +94,22 @@ router.post(
     } else {
       // Data from form is valid. Store in database
       console.log(req.body);
-      const {
-        courseCode,
-        author,
-        questions,
-      } = req.body;
+      const { courseCode, author, questions } = req.body;
 
       try {
         const newReport = new Report({
           courseCode: courseCode,
           author: author,
-          questions: questions
+          questions: questions,
         });
-        const filter = { _id: courseID };
-        const update = { courseInstances: newReport };
+        const filter = { _id: courseID, "instances._id": instanceID };
+        const update = { instances: { report: newReport } };
         let doc = await Course.findOneAndUpdate(filter, update);
+        /*Course.findOneAndUpdate(
+          { _id: courseID, "instances._id": instanceID },
+          { $set: { "instances.$": { report: newReport } } }
+        ).exec();
+        */
         const report = await newReport.save();
         res.json(report);
         console.log("Report posted to DB");

@@ -21,22 +21,24 @@ const CourseSchema = new mongoose.Schema({
   },
   date: {
     type: Number,
-    required: true
+    required: true,
   },
   extentUnit: {
     type: String,
     required: true,
   },
-  instances: [{
-    _id: Number,
-    date: Number,
-    report: Report,
-  }],
+  instances: [
+    {
+      _id: Number,
+      date: Number,
+      report: Report,
+    },
+  ],
 });
 
 CourseSchema.index({
   name: "text",
-  nameEng: "text"
+  nameEng: "text",
 });
 
 module.exports = Report = mongoose.model("course", CourseSchema);
