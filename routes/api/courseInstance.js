@@ -62,22 +62,7 @@ router.post(
   "/",
   [
     body("courseCode", "Invalid input").trim().escape(),
-    body("question1.answer", "Invalid input")
-      .trim()
-      .escape()
-      .blacklist(blacklist),
-    body("question2.answer", "Invalid input")
-      .trim()
-      .escape()
-      .blacklist(blacklist),
-    body("question3.answer", "Invalid input")
-      .trim()
-      .escape()
-      .blacklist(blacklist),
-    body("question4.answer", "Invalid input")
-      .trim()
-      .escape()
-      .blacklist(blacklist),
+    //body("questions", "Invalid input").trim().escape(). blacklist()
   ],
 
   jsonParser,
