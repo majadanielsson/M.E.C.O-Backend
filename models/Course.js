@@ -19,11 +19,19 @@ const CourseSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  date: {
+    type: Number,
+    required: true
+  },
   extentUnit: {
     type: String,
     required: true,
   },
-  courseInstances: [Report],
+  instances: [{
+    _id: Number,
+    date: Number,
+    report: Report,
+  }],
 });
 
 CourseSchema.index({
