@@ -23,7 +23,7 @@ router.post('/login', function(req, res) {
   });
   const query = {
     ticket: req.body.ticket.substring(0, 400),
-    service: "http://localhost:3000/login/"
+    service: "http://localhost:8080/login/"
   };
   fetch(`${cas}/validate?${querystring.encode(query)}`)
     .then(response => response.text())

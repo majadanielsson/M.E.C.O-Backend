@@ -13,6 +13,7 @@ var db = require("./mongoose.js");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var casRouter = require("./routes/cas");
+var searchRouter = require("./routes/search");
 var formRouter = require("./routes/api/courseInstance");
 
 var app = express();
@@ -38,6 +39,7 @@ app.use(authentication());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/cas", casRouter);
+app.use("/search", searchRouter);
 app.use("/api/courseInstance", formRouter);
 
 // catch 404 and forward to error handler
