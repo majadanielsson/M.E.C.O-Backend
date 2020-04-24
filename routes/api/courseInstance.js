@@ -96,20 +96,14 @@ router.post(
       const {
         courseCode,
         author,
-        question1,
-        question2,
-        question3,
-        question4,
+        questions,
       } = req.body;
 
       try {
         const newReport = new Report({
           courseCode: courseCode,
           author: author,
-          question1: question1,
-          question2: question2,
-          question3: question3,
-          question4: question4,
+          questions: questions
         });
         const filter = { _id: courseID };
         const update = { courseInstances: newReport };
