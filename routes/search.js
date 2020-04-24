@@ -16,14 +16,8 @@ router.get('/', async function(req, res, next) {
           _id: (q.length == 6) ? q.toUpperCase() : ""
         }
       ]
-    }, {
-      score: {
-        $meta: "textScore"
-      }
     }).select("name nameEng extent extentUnit").sort({
-      score: {
-        $meta: "textScore"
-      }
+      date: -1
     }).skip(20 * page).limit(20);
     res.json(response);
   } catch (err) {
