@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+var Report = require("./Report").schema;
 
 const CourseSchema = new mongoose.Schema({
   _id: {
@@ -18,10 +19,19 @@ const CourseSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  date: {
+    type: Number,
+    required: true
+  },
   extentUnit: {
     type: String,
     required: true,
   },
+  instances: [{
+    _id: Number,
+    date: Number,
+    report: Report,
+  }],
 });
 
 CourseSchema.index({
