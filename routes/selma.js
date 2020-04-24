@@ -7,11 +7,11 @@ router.get('/', function(req, res, next) {
   var args = {
     benamning: '',
     kurskod: '',
-    startveckaFrom: 202000
+    startveckaFrom: 100000,
+    startveckaTo: 200000
   };
   soap.createClient(url, function(err, client) {
     client.sokKursplanStartvecka(args, function(err, result) {
-      console.log(result);
       res.send(result);
     });
   });
