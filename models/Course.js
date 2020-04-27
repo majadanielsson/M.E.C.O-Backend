@@ -27,12 +27,14 @@ const CourseSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  instances: [{
-    _id: Number,
-    date: String,
-    responsible: [String],
-    report: Report,
-  }],
+  instances: [
+    {
+      _id: Number,
+      date: String,
+      responsible: [String],
+      report: Report,
+    },
+  ],
 });
 
 CourseSchema.index({

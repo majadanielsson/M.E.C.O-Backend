@@ -18,18 +18,17 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 // @access    Public
 router.get("/", urlencodedParser, async function (req, res, next) {
   var courseID = req.query.courseID;
-  var responsible = req.user.name;
+  var responsible = req.query.responsible;
   //check if courseID was provided
   if (responsible) {
     // Get course by ID in course collection
     try {
-      const courseInstances = Course.find({
+      const courseInstances = await Course.find({
         instances: { $elemMatch: { responsible: responsible } },
       });
       res.json(courseInstances);
     } catch (err) {
       console.error(err.message);
-
       res.status(500).send("Server Error");
     }
   } else {
