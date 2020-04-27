@@ -87,14 +87,14 @@ router.post(
           author: author,
           questions: questions,
         });
-        const filter = { _id: courseID, "instances._id": instanceID };
-        const update = { instances: { report: newReport } };
-        let doc = await Course.findOneAndUpdate(filter, update);
-        /*Course.findOneAndUpdate(
+        //const filter = { _id: courseID, "instances._id": instanceID };
+        // const update = { instances: { report: newReport } };
+        // let doc = await Course.findOneAndUpdate(filter, update);
+        Course.findOneAndUpdate(
           { _id: courseID, "instances._id": instanceID },
-          { $set: { "instances.$": { report: newReport } } }
+          { $set: { "instances.$.report": { report: newReport } } }
         ).exec();
-        */
+
         const report = await newReport.save();
         res.json(report);
         console.log("Report posted to DB");
