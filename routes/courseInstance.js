@@ -102,9 +102,7 @@ router.post(
           author: author,
           questions: questions,
         });
-        //const filter = { _id: courseID, "instances._id": instanceID };
-        // const update = { instances: { report: newReport } };
-        // let doc = await Course.findOneAndUpdate(filter, update);
+
         Course.findOneAndUpdate(
           { _id: courseID, "instances._id": instanceID },
           { $set: { "instances.$.report": newReport } }
