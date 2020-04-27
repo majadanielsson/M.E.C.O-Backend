@@ -2,6 +2,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var router = express.Router();
 const { body, validationResult } = require("express-validator");
+const { check, sanitize } = require("express-validator");
 const blacklist = "{}$";
 const Report = require("../models/Report");
 const Course = require("../models/Course");
@@ -17,6 +18,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 // @access    Public
 router.get("/", urlencodedParser, async function (req, res, next) {
   var courseCode = req.query.courseCode;
+  var courseCode = req.param;
   var courseID = req.query.courseID;
   //check if courseID was provided
   if (courseID) {
@@ -62,7 +64,10 @@ router.post(
   "/",
   [
     body("courseCode", "Invalid input").trim().escape(),
-    body("questions.*.answer", "Invalid input").trim().escape().blacklist(),
+    body("questions.*.answer", "Invalid input")
+      .trim()
+      .escape()
+      .blacklist(blacklist),
   ],
 
   jsonParser,
