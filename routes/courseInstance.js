@@ -1,7 +1,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var router = express.Router();
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, check, sanitize } = require("express-validator");
 const blacklist = "{}$";
 const Report = require("../models/Report");
 const Course = require("../models/Course");
@@ -61,8 +61,8 @@ router.get("/", urlencodedParser, async function (req, res, next) {
 router.post(
   "/",
   [
-    body("courseCode", "Invalid input").trim().escape(),
-    body("questions.*.answer", "Invalid input").trim().escape().blacklist(),
+    body("courseCode", "Invalid input").trim().escape().isLength({ min: 1, max: 10 }),
+    body("questions.*.answer", "Invalid input").trim().escape().blacklist(blacklist).isLength({ min: 1, max: 10 }),
   ],
 
   jsonParser,
