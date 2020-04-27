@@ -61,8 +61,9 @@ router.get("/", urlencodedParser, async function (req, res, next) {
 router.post(
   "/",
   [
-    body("courseCode", "Invalid input").trim().escape().isLength({ min: 1, max: 10 }),
-    body("questions.*.answer", "Invalid input").trim().escape().blacklist(blacklist).isLength({ min: 1, max: 10 }),
+    body("courseCode", "Invalid input").trim().escape().blacklist(blacklist).isLength({ min: 1, max: 10 }),
+    body("author", "Invalid input").trim().escape().blacklist(blacklist).isLength({ min: 1, max: 10 }),
+    body("questions.*.answer", "Invalid input").trim().escape().blacklist(blacklist).isLength({ min: 1, max: 10 })
   ],
 
   jsonParser,
