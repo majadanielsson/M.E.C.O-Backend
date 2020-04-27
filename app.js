@@ -11,7 +11,6 @@ var db = require("./mongoose.js");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
-var selmaRouter = require("./routes/selma");
 var casRouter = require("./routes/cas");
 var validationRouter = require("./routes/api/validateForm");
 
@@ -38,7 +37,6 @@ app.use(authentication());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/cas", casRouter);
-app.use("/selma", selmaRouter);
 app.use("api/validateForm", validationRouter);
 
 // catch 404 and forward to error handler
