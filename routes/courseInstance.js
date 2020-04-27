@@ -66,7 +66,10 @@ router.post(
     var courseID = req.query.courseID;
     var instanceID = req.query.instanceID;
     var author = req.user.name;
+<<<<<<< HEAD
     console.log(author);
+=======
+>>>>>>> fb48bc772715578dcf10f491880d41bc4e272e37
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
       // Error messages can be returned in an array using `errors.array()`.
@@ -76,9 +79,12 @@ router.post(
       // Data from form is valid. Store in database
       console.log(req.body);
       const { questions } = req.body;
+<<<<<<< HEAD
       console.log(questions);
       console.log(req.body);
 
+=======
+>>>>>>> fb48bc772715578dcf10f491880d41bc4e272e37
       try {
         const newReport = new Report({
           author: author,
