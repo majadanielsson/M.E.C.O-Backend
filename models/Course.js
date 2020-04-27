@@ -30,6 +30,7 @@ const CourseSchema = new mongoose.Schema({
   instances: [{
     _id: Number,
     date: String,
+    responsible: [String],
     report: Report,
   }],
 });
@@ -37,6 +38,7 @@ const CourseSchema = new mongoose.Schema({
 CourseSchema.index({
   name: "text",
   nameEng: "text",
+  responsible: 1,
 });
 
 module.exports = Report = mongoose.model("course", CourseSchema);
