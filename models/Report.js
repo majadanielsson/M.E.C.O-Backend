@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const ReportSchema = new mongoose.Schema({
-  courseCode: {
-    type: String,
-    required: true,
-  },
   author: {
     type: String,
     required: true,
