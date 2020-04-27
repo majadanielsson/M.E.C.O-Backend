@@ -3,8 +3,8 @@ var bodyParser = require("body-parser");
 var router = express.Router();
 const { body, validationResult } = require("express-validator");
 const blacklist = "{}$";
-const Report = require("../../models/Report");
-const Course = require("../../models/Course");
+const Report = require("../models/Report");
+const Course = require("../models/Course");
 
 // create application/json parser
 var jsonParser = bodyParser.json();
@@ -62,7 +62,7 @@ router.post(
   "/",
   [
     body("courseCode", "Invalid input").trim().escape(),
-    //body("questions", "Invalid input").trim().escape(). blacklist()
+    body("questions.*.answer", "Invalid input").trim().escape().blacklist(),
   ],
 
   jsonParser,

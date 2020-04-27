@@ -14,7 +14,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var casRouter = require("./routes/cas");
 var searchRouter = require("./routes/search");
-var formRouter = require("./routes/api/courseInstance");
+var formRouter = require("./routes/courseInstance");
 
 var app = express();
 
@@ -40,7 +40,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/cas", casRouter);
 app.use("/search", searchRouter);
-app.use("/api/courseInstance", formRouter);
+app.use("/reports", formRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
