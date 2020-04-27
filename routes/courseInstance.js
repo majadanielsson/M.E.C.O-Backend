@@ -76,6 +76,7 @@ router.post(
     const errors = validationResult(req);
     var courseID = req.query.courseID;
     var instanceID = req.query.instanceID;
+    var author = req.user.name;
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
       // Error messages can be returned in an array using `errors.array()`.
@@ -84,11 +85,10 @@ router.post(
     } else {
       // Data from form is valid. Store in database
       console.log(req.body);
-      const { courseCode, author, questions } = req.body;
+      const { questions } = req.body;
 
       try {
         const newReport = new Report({
-          courseCode: courseCode,
           author: author,
           questions: questions,
         });
