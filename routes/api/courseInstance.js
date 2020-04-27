@@ -92,7 +92,7 @@ router.post(
         // let doc = await Course.findOneAndUpdate(filter, update);
         Course.findOneAndUpdate(
           { _id: courseID, "instances._id": instanceID },
-          { $set: { "instances.$.report": { report: newReport } } }
+          { $set: { "instances.$.report": newReport } }
         ).exec();
 
         const report = await newReport.save();
