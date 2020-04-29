@@ -21,11 +21,27 @@ router.get("/", urlencodedParser, async function (req, res, next) {
   var responsible = req.query.responsible;
   //check if courseID was provided
   if (responsible) {
-    // Get course by ID in course collection
     try {
-      const courseInstances = await Course.find({
-        instances: { $elemMatch: { responsible: responsible } },
-      });
+      const courseInstances = await Course.aggregate([
+        { $match: { "instances.responsible": responsible } },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            nameEng: 1,
+            extent: 1,
+            date: 1,
+            extentUnit: 1,
+            instances: {
+              $filter: {
+                input: "$instances",
+                as: "instance",
+                cond: { $in: [responsible, "$$instance.responsible"] },
+              },
+            },
+          },
+        },
+      ]);
       res.json(courseInstances);
     } catch (err) {
       console.error(err.message);
