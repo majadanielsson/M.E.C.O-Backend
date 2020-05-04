@@ -42,7 +42,9 @@ function formatSave() {
     }
     dataObj[id].instances.push({
       date: source.period,
-      _id: source.id
+      instanceId: source.anmalningskod,
+      _id: source.id,
+      responsible: []
     });
   }
   fs.writeFileSync("data.json", JSON.stringify(Object.values(dataObj)));
