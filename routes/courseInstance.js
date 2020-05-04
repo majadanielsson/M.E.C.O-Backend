@@ -2,10 +2,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var router = express.Router();
 
-const {
-  body,
-  validationResult
-} = require("express-validator");
+const { body, validationResult } = require("express-validator");
 const blacklist = "{}$";
 const Report = require("../models/Report");
 const Course = require("../models/Course");
@@ -15,22 +12,23 @@ var jsonParser = bodyParser.json();
 
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({
-  extended: false
+  extended: false,
 });
 
 // @route     GET /reports
 // @desc      Test route
 // @access    Public
-router.get("/:courseId", urlencodedParser, async function(req, res, next) {
+router.get("/:courseId?", urlencodedParser, async function (req, res, next) {
   var courseID = req.params.courseId;
   var responsible = req.query.responsible;
   //check if courseID was provided
-  if (responsible) {
+  if (responsible == "true") {
     try {
-      const courseInstances = await Course.aggregate([{
+      const courseInstances = await Course.aggregate([
+        {
           $match: {
-            "instances.responsible": responsible
-          }
+            "instances.responsible": req.user.username,
+          },
         },
         {
           $project: {
@@ -45,7 +43,7 @@ router.get("/:courseId", urlencodedParser, async function(req, res, next) {
                 input: "$instances",
                 as: "instance",
                 cond: {
-                  $in: [responsible, "$$instance.responsible"]
+                  $in: [req.user.username, "$$instance.responsible"],
                 },
               },
             },
@@ -79,13 +77,13 @@ router.post(
   "/:courseId/:instanceId",
   [
     body("questions.*.answer", "Invalid input")
-    .trim()
-    .escape()
-    .blacklist(blacklist)
-    .isLength({
-      min: 1,
-      max: 10
-    }),
+      .trim()
+      .escape()
+      .blacklist(blacklist)
+      .isLength({
+        min: 1,
+        max: 10,
+      }),
   ],
 
   jsonParser,
@@ -100,28 +98,29 @@ router.post(
       // Error messages can be returned in an array using `errors.array()`.
       console.log("Found validation errors");
       return res.status(422).json({
-        errors: errors.array()
+        errors: errors.array(),
       });
     } else {
       // Data from form is valid. Store in database
       console.log(req.body);
-      const {
-        questions
-      } = req.body;
+      const { questions } = req.body;
       try {
         const newReport = new Report({
           author: author,
           questions: questions,
         });
 
-        Course.findOneAndUpdate({
-          _id: courseID,
-          "instances._id": instanceID
-        }, {
-          $set: {
-            "instances.$.report": newReport
+        Course.findOneAndUpdate(
+          {
+            _id: courseID,
+            "instances._id": instanceID,
+          },
+          {
+            $set: {
+              "instances.$.report": newReport,
+            },
           }
-        }).exec();
+        ).exec();
 
         const report = await newReport.save();
         res.json(report);
