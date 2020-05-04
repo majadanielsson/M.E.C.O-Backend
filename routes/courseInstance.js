@@ -9,14 +9,6 @@ const blacklist = "{}$";
 const Report = require("../models/Report");
 const Course = require("../models/Course");
 
-// create application/json parser
-var jsonParser = bodyParser.json();
-
-// create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({
-  extended: false,
-});
-
 // @route     GET /reports
 // @desc      Test route
 // @access    Public
