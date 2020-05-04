@@ -1,5 +1,4 @@
 var express = require("express");
-var bodyParser = require("body-parser");
 var router = express.Router();
 
 const {
@@ -21,7 +20,7 @@ var urlencodedParser = bodyParser.urlencoded({
 // @route     GET /reports
 // @desc      Test route
 // @access    Public
-router.get("/:courseId?", urlencodedParser, async function(req, res, next) {
+router.get("/:courseId?", async function(req, res, next) {
   var courseID = req.params.courseId;
   var responsible = req.query.responsible;
   //check if courseID was provided
@@ -87,8 +86,6 @@ router.post(
       max: 10,
     }),
   ],
-
-  jsonParser,
   async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
