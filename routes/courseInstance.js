@@ -17,7 +17,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 // @desc      Test route
 // @access    Public
 router.get("/", urlencodedParser, async function (req, res, next) {
-  var courseID = req.query.courseID;
+  var courseID = req.params.id;
   var responsible = req.query.responsible;
   //check if courseID was provided
   if (responsible) {
@@ -42,18 +42,19 @@ router.get("/", urlencodedParser, async function (req, res, next) {
           },
         },
       ]);
+
       res.json(courseInstances);
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server Error");
     }
-  } else {
+  } else if (courseID) {
     try {
       // Get all entries in Courses
 
-      const report = await Course.find();
+      const course = await Course.findById(courseID);
 
-      res.json(report);
+      res.json(course);
     } catch (err) {
       console.error(err.message);
 
