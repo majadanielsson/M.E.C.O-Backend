@@ -16,10 +16,9 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 // @route     GET /reports
 // @desc      Test route
 // @access    Public
-router.get("/:id", urlencodedParser, async function (req, res, next) {
+router.get("/", urlencodedParser, async function (req, res, next) {
   var courseID = req.params.id;
   var responsible = req.query.responsible;
-  console.log("hej");
   //check if courseID was provided
   if (responsible) {
     try {
@@ -49,10 +48,10 @@ router.get("/:id", urlencodedParser, async function (req, res, next) {
       console.error(err.message);
       res.status(500).send("Server Error");
     }
-  } else {
+  } else if (courseID) {
     try {
       // Get all entries in Courses
-      console.log("hej");
+
       const course = await Course.findById(courseID);
 
       res.json(course);
