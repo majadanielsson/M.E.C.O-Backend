@@ -1,7 +1,7 @@
 var jwt = require("jsonwebtoken");
 
-module.exports = function () {
-  return function (req, res, next) {
+module.exports = function() {
+  return function(req, res, next) {
     if (
       req.cookies.access_token &&
       req.cookies.access_token.split(" ")[0] == "Bearer"
@@ -9,7 +9,7 @@ module.exports = function () {
       try {
         var token = req.cookies.access_token.split(" ")[1];
         req.user = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(`User: ${req.user}`);
+        console.log(`Logged in as:\nusername: ${req.user.username}`);
       } catch (err) {
         console.log(`Invalid JWT token:\n${err}`);
         res.status(403).json({

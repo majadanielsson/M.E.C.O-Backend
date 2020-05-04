@@ -64,7 +64,6 @@ router.get('/logout', function(req, res) {
 // Create fake JWT
 router.post('/dev', function(req, res) {
   var token = jwt.sign(req.body, process.env.JWT_SECRET);
-  console.log("SUPER SECRET JWT COOKIE\naccess_token:\n-------------\nBearer " + token + "\n-------------\n ");
   res.cookie('access_token', `Bearer ${token}`).json(req.body);
 });
 module.exports = router;
