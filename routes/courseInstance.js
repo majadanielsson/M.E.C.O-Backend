@@ -21,7 +21,7 @@ var urlencodedParser = bodyParser.urlencoded({
 // @route     GET /reports
 // @desc      Test route
 // @access    Public
-router.get("/:courseId", urlencodedParser, async function(req, res, next) {
+router.get("/:courseId?", urlencodedParser, async function(req, res, next) {
   var courseID = req.params.courseId;
   var responsible = req.query.responsible;
   //check if courseID was provided
