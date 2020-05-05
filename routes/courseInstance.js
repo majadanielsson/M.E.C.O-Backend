@@ -1,10 +1,7 @@
 var express = require("express");
 var router = express.Router();
 
-const {
-  body,
-  validationResult
-} = require("express-validator");
+const { body, validationResult } = require("express-validator");
 const blacklist = "{}$";
 const Report = require("../models/Report");
 const Course = require("../models/Course");
@@ -21,6 +18,7 @@ router.get("/:courseId?", async function (req, res, next) {
       const courseInstances = await Course.aggregate([{
         $match: {
           "instances.responsible": req.user.username,
+
         },
       },
       {
@@ -104,6 +102,8 @@ router.post(
     var courseID = req.params.courseId;
     var instanceID = req.params.instanceId;
     var author = req.user.name;
+    var edit = req.query.edit;
+
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
       // Error messages can be returned in an array using `errors.array()`.
@@ -114,23 +114,40 @@ router.post(
     } else {
       // Data from form is valid. Store in database
       console.log(req.body);
-      const {
-        questions
-      } = req.body;
+      const { questions } = req.body;
       try {
         const newReport = new Report({
           author: author,
           questions: questions,
         });
-
-        Course.findOneAndUpdate({
-          _id: courseID,
-          "instances._id": instanceID,
-        }, {
-          $set: {
-            "instances.$.report": newReport,
-          },
-        }).exec();
+        // If edit is true, push a new report to the "reports"-array
+        if ((edit = "true")) {
+          Course.findOneAndUpdate(
+            {
+              _id: courseID,
+              "instances._id": instanceID,
+            },
+            {
+              $push: {
+                "instances.$.report": newReport,
+              },
+            }
+          ).exec();
+        }
+        // Add a new report
+        else {
+          Course.findOneAndUpdate(
+            {
+              _id: courseID,
+              "instances._id": instanceID,
+            },
+            {
+              $set: {
+                "instances.$.report": newReport,
+              },
+            }
+          ).exec();
+        }
 
         const report = await newReport.save();
         res.json(report);
