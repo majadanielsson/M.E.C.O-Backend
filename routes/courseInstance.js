@@ -15,31 +15,31 @@ router.get("/:courseId?", async function (req, res, next) {
   //check if courseID was provided
   if (responsible == "true") {
     try {
-      const courseInstances = await Course.aggregate([
-        {
-          $match: {
-            "instances.responsible": req.user.username,
-          },
+      const courseInstances = await Course.aggregate([{
+        $match: {
+          "instances.responsible": req.user.username,
+
         },
-        {
-          $project: {
-            _id: 1,
-            name: 1,
-            nameEng: 1,
-            extent: 1,
-            date: 1,
-            extentUnit: 1,
-            instances: {
-              $filter: {
-                input: "$instances",
-                as: "instance",
-                cond: {
-                  $in: [req.user.username, "$$instance.responsible"],
-                },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          nameEng: 1,
+          extent: 1,
+          date: 1,
+          extentUnit: 1,
+          instances: {
+            $filter: {
+              input: "$instances",
+              as: "instance",
+              cond: {
+                $in: [req.user.username, "$$instance.responsible"],
               },
             },
           },
         },
+      },
       ]);
 
       res.json(courseInstances);
@@ -61,6 +61,26 @@ router.get("/:courseId?", async function (req, res, next) {
     }
   }
 });
+
+router.get("/:courseId/:instanceId", async function (req, res) {
+  try {
+    const course = await Course.find({
+      _id: req.params.courseId,
+      "instances._id": req.params.instanceId
+    },
+      {
+        "instances.$": true
+      }
+    );
+    if (course && course[0].instances)
+      res.json(course[0].instances[0]);
+    else res.status(404).json({ message: "The requested instance was not found", detail: "No match" })
+  }
+  catch (err) {
+    res.status(500).json({ message: "Something went wrong", detail: "Server error" })
+  }
+});
+
 // @route    POST api/users
 // @desc     Posts form
 // @access   Public
