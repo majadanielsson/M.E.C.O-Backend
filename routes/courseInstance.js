@@ -71,11 +71,14 @@ router.get("/:courseId/:instanceId", async function (req, res) {
       "instances._id": req.params.instanceId
     },
       {
-        "instances.$": true
+        "instances.$": true,
+        name: true,
+        nameEng: true
       }
     );
-    if (course && course[0].instances)
-      res.json(course[0].instances[0]);
+    if (course && course[0].instances) {
+      res.json({ ...course[0].instances[0].toObject(), name: course[0].name, courseId: course[0]._id });
+    }
     else res.status(404).json({ message: "The requested instance was not found", detail: "No match" })
   }
   catch (err) {
