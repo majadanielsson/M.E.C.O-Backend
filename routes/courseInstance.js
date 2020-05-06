@@ -1,6 +1,12 @@
 var express = require("express");
 var router = express.Router();
+var bodyParser = require("body-parser");
+var jsonParser = bodyParser.json();
 
+// create application/x-www-form-urlencoded parser
+var urlencodedParser = bodyParser.urlencoded({
+  extended: false,
+});
 const { body, validationResult } = require("express-validator");
 const blacklist = "{}$";
 const Report = require("../models/Report");
@@ -157,14 +163,13 @@ router.post(
         max: 10,
       }),
   ],
+  urlencodedParser,
   async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
     var courseID = req.params.courseId;
     var instanceID = req.params.instanceId;
     var author = req.user.name;
-    var edit = req.query.edit;
-
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
       // Error messages can be returned in an array using `errors.array()`.
@@ -176,39 +181,24 @@ router.post(
       // Data from form is valid. Store in database
       console.log(req.body);
       const { questions } = req.body;
+
       try {
         const newReport = new Report({
           author: author,
           questions: questions,
         });
-        // If edit is true, push a new report to the "reports"-array
-        if ((edit = "true")) {
-          Course.findOneAndUpdate(
-            {
-              _id: courseID,
-              "instances._id": instanceID,
+        //Push a new report to the "reports"-array
+        Course.findOneAndUpdate(
+          {
+            _id: courseID,
+            "instances._id": instanceID,
+          },
+          {
+            $push: {
+              "instances.$.report": newReport,
             },
-            {
-              $push: {
-                "instances.$.report": newReport,
-              },
-            }
-          ).exec();
-        }
-        // Add a new report
-        else {
-          Course.findOneAndUpdate(
-            {
-              _id: courseID,
-              "instances._id": instanceID,
-            },
-            {
-              $set: {
-                "instances.$.report": newReport,
-              },
-            }
-          ).exec();
-        }
+          }
+        ).exec();
 
         const report = await newReport.save();
         res.json(report);
