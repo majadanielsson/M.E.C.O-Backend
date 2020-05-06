@@ -10,16 +10,21 @@ const ReportSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  questions: [{
-    question: {
-      type: String,
-      required: true
+  questions: [
+    {
+      question: {
+        type: String,
+        required: true,
+      },
+      answer: {
+        type: String,
+        required: true,
+      },
     },
-    answer: {
-      type: String,
-      required: true
-    },
-  }]
+  ],
+  comments: {
+    type: [String],
+  },
 });
 
 module.exports = Report = mongoose.model("report", ReportSchema);

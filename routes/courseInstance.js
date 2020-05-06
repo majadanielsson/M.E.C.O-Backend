@@ -15,31 +15,31 @@ router.get("/:courseId?", async function (req, res, next) {
   //check if courseID was provided
   if (responsible == "true") {
     try {
-      const courseInstances = await Course.aggregate([{
-        $match: {
-          "instances.responsible": req.user.username,
-
+      const courseInstances = await Course.aggregate([
+        {
+          $match: {
+            "instances.responsible": req.user.username,
+          },
         },
-      },
-      {
-        $project: {
-          _id: 1,
-          name: 1,
-          nameEng: 1,
-          extent: 1,
-          date: 1,
-          extentUnit: 1,
-          instances: {
-            $filter: {
-              input: "$instances",
-              as: "instance",
-              cond: {
-                $in: [req.user.username, "$$instance.responsible"],
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            nameEng: 1,
+            extent: 1,
+            date: 1,
+            extentUnit: 1,
+            instances: {
+              $filter: {
+                input: "$instances",
+                as: "instance",
+                cond: {
+                  $in: [req.user.username, "$$instance.responsible"],
+                },
               },
             },
           },
         },
-      },
       ]);
 
       res.json(courseInstances);
@@ -64,25 +64,83 @@ router.get("/:courseId?", async function (req, res, next) {
 
 router.get("/:courseId/:instanceId", async function (req, res) {
   try {
-    const course = await Course.find({
-      _id: req.params.courseId,
-      "instances._id": req.params.instanceId
-    },
+    const course = await Course.find(
+      {
+        _id: req.params.courseId,
+        "instances._id": req.params.instanceId,
+      },
       {
         "instances.$": true,
         name: true,
-        nameEng: true
+        nameEng: true,
       }
     );
     if (course && course[0].instances) {
-      res.json({ ...course[0].instances[0].toObject(), name: course[0].name, courseId: course[0]._id });
-    }
-    else res.status(404).json({ message: "The requested instance was not found", detail: "No match" })
-  }
-  catch (err) {
-    res.status(500).json({ message: "Something went wrong", detail: "Server error" })
+      res.json({
+        ...course[0].instances[0].toObject(),
+        name: course[0].name,
+        courseId: course[0]._id,
+      });
+    } else res.status(404).json({ message: "The requested instance was not found", detail: "No match" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Something went wrong", detail: "Server error" });
   }
 });
+
+router.post(
+  "/:courseId/:instanceId/:comment",
+  [
+    body("comment", "Invalid input")
+      .trim()
+      .escape()
+      .blacklist(blacklist)
+      .isLength({
+        min: 1,
+        max: 100,
+      }),
+  ],
+  async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+    var courseID = req.params.courseId;
+    var instanceID = req.params.instanceId;
+    var comment = req.body.comment;
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/errors messages.
+      // Error messages can be returned in an array using `errors.array()`.
+      console.log("Found validation errors");
+      return res.status(422).json({
+        errors: errors.array(),
+      });
+    } else {
+      // Data from form is valid. Store in database
+      console.log(req.body);
+      // Add comment to the comments-array of the latest report in instances
+      try {
+        Course.findOneAndUpdate(
+          {
+            _id: courseID,
+            "instances._id": instanceID,
+          },
+          {
+            $push: {
+              "instances.0.report.$.comments": comment,
+            },
+          }
+        ).exec();
+
+        res.json(comment);
+        console.log("Comment posted to report");
+      } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
+      }
+    }
+  }
+);
 
 // @route    POST api/users
 // @desc     Posts form
