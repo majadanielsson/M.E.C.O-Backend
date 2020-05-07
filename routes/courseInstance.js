@@ -96,7 +96,7 @@ router.get("/:courseId/:instanceId", async function (req, res) {
 });
 
 router.post(
-  "/:courseId/:instanceId/:comment",
+  "/:courseId/:instanceId/comment",
   [
     body("comment", "Invalid input")
       .trim()
@@ -126,6 +126,11 @@ router.post(
       console.log(req.body);
       // Add comment to the comments-array of the latest report in instances
       try {
+        var reportID = Course.find({
+          _id: courseID,
+          "instances._id": instanceID,
+        });
+
         Course.findOneAndUpdate(
           {
             _id: courseID,
@@ -133,7 +138,7 @@ router.post(
           },
           {
             $push: {
-              "instances.0.report.$.comments": comment,
+              "instances.$.report.0.comments": comment,
             },
           }
         ).exec();
@@ -195,7 +200,10 @@ router.post(
           },
           {
             $push: {
-              "instances.$.report": newReport,
+              "instances.$.report": {
+                $each: [newReport],
+                $position: 0,
+              },
             },
           }
         ).exec();
