@@ -1,12 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var bodyParser = require("body-parser");
-var jsonParser = bodyParser.json();
 
-// create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({
-  extended: false,
-});
 const { body, validationResult } = require("express-validator");
 const blacklist = "{}$";
 const Report = require("../models/Report");
@@ -168,7 +162,6 @@ router.post(
         max: 10,
       }),
   ],
-  urlencodedParser,
   async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
