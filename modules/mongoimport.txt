@@ -1,0 +1,1 @@
+mongoimport --host MECO-shard-0/meco-shard-00-00-ju6ws.mongodb.net:27017,meco-shard-00-01-ju6ws.mongodb.net:27017,meco-shard-00-02-ju6ws.mongodb.net:27017 --ssl --username admin --password HWLK3c2kfMD2b9 --authenticationDatabase admin --db test --collection courses --type json --file data.json --mode=upsert --jsonArray --drop
