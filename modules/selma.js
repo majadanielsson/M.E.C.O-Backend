@@ -44,7 +44,8 @@ function formatSave() {
       date: source.period,
       instanceId: source.anmalningskod,
       _id: source.id,
-      responsible: []
+      responsible: [],
+      report: []
     });
   }
   fs.writeFileSync("data.json", JSON.stringify(Object.values(dataObj)));
