@@ -1,7 +1,7 @@
 var jwt = require("jsonwebtoken");
 
-module.exports = function() {
-  return function(req, res, next) {
+module.exports = function () {
+  return function (req, res, next) {
     if (
       req.cookies.access_token &&
       req.cookies.access_token.split(" ")[0] == "Bearer"
@@ -15,6 +15,7 @@ module.exports = function() {
         res.status(403).json({
           message: "Invalid authentication",
           detail: "Invalid JWT token",
+          error: "session-timeout"
         });
       }
     }
