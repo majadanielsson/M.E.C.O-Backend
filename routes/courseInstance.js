@@ -64,34 +64,22 @@ router.get("/:courseId?", async function (req, res, next) {
 
 router.get("/:courseId/:instanceId", async function (req, res) {
   try {
-    const course = await Course.aggregate([
+    const course = await Course.find(
       {
-        $match: {
-          _id: req.params.courseId,
-        },
+        _id: req.params.courseId,
+        "instances._id": req.params.instanceId,
       },
       {
-        $project: {
-          _id: 1,
-          name: 1,
-          nameEng: 1,
-          instances: {
-            $filter: {
-              input: "$instances",
-              as: "instance",
-              cond: {
-                $eq: [req.params.instanceId, "$$instance._id"],
-              },
-            },
-          },
-        },
-      },
-    ])
-    if (course && course[0].instances[0]) {
+        "instances.$": true,
+        name: true,
+        nameEng: true,
+      }
+    );
+    if (course && course[0].instances) {
       res.json({
+        ...course[0].instances[0].toObject(),
         name: course[0].name,
         courseId: course[0]._id,
-        ...course[0].instances[0]
       });
     } else res.status(404).json({ message: "The requested instance was not found", detail: "No match" });
   } catch (err) {
