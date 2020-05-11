@@ -7,12 +7,15 @@ const Report = require("../models/Report");
 const Course = require("../models/Course");
 
 // @route     GET /reports
-// @desc      Test route
+// @desc      if responible == true, return every parent course
+//            and course instance that the responsible is included in
+//            otherwise return all courses
 // @access    Public
 router.get("/:courseId?", async function (req, res, next) {
   var courseID = req.params.courseId;
   var responsible = req.query.responsible;
-  //check if courseID was provided
+  /* If responsible == true, return every parent course
+     and course instance that the responsible is included in */
   if (responsible == "true") {
     try {
       const courseInstances = await Course.aggregate([
@@ -49,7 +52,7 @@ router.get("/:courseId?", async function (req, res, next) {
     }
   } else if (courseID) {
     try {
-      // Get all entries in Courses
+      // Get all documents in Course
 
       const course = await Course.findById(courseID);
 
@@ -168,6 +171,7 @@ router.post(
     var courseID = req.params.courseId;
     var instanceID = req.params.instanceId;
     var author = req.user.name;
+    console.log(req.body);
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
       // Error messages can be returned in an array using `errors.array()`.
