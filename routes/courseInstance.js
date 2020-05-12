@@ -7,12 +7,15 @@ const Report = require("../models/Report");
 const Course = require("../models/Course");
 
 // @route     GET /reports
-// @desc      Test route
+// @desc      if responible == true, return every parent course
+//            and course instance that the responsible is included in
+//            otherwise return all courses
 // @access    Public
 router.get("/:courseId?", async function (req, res, next) {
   var courseID = req.params.courseId;
   var responsible = req.query.responsible;
-  //check if courseID was provided
+  /* If responsible == true, return every parent course
+     and course instance that the responsible is included in */
   if (responsible == "true") {
     try {
       const courseInstances = await Course.aggregate([
@@ -49,7 +52,7 @@ router.get("/:courseId?", async function (req, res, next) {
     }
   } else if (courseID) {
     try {
-      // Get all entries in Courses
+      // Get all documents in Course
 
       const course = await Course.findById(courseID);
 
@@ -98,7 +101,6 @@ router.post(
       .blacklist(blacklist)
       .isLength({
         min: 1,
-        max: 100,
       }),
   ],
   async (req, res, next) => {
@@ -125,7 +127,7 @@ router.post(
           "instances._id": instanceID,
         });
 
-        Course.findOneAndUpdate(
+        await Course.findOneAndUpdate(
           {
             _id: courseID,
             "instances._id": instanceID,
@@ -159,7 +161,6 @@ router.post(
       .blacklist(blacklist)
       .isLength({
         min: 1,
-        max: 10,
       }),
   ],
   async (req, res, next) => {
@@ -168,6 +169,7 @@ router.post(
     var courseID = req.params.courseId;
     var instanceID = req.params.instanceId;
     var author = req.user.name;
+    console.log(req.body);
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
       // Error messages can be returned in an array using `errors.array()`.
@@ -186,7 +188,7 @@ router.post(
           questions: questions,
         });
         //Push a new report to the "reports"-array
-        Course.findOneAndUpdate(
+        var report = await Course.findOneAndUpdate(
           {
             _id: courseID,
             "instances._id": instanceID,
@@ -200,9 +202,9 @@ router.post(
             },
           }
         ).exec();
-
-        const report = await newReport.save();
         res.json(report);
+        //const report = await newReport.save();
+        // res.json(report);
         console.log("Report posted to DB");
       } catch (err) {
         console.error(err.message);
