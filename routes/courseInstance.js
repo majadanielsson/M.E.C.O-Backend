@@ -67,10 +67,10 @@ router.get("/:courseId?", async function (req, res, next) {
 
 router.get("/:courseId/:instanceId", async function (req, res) {
   try {
-    const course = await Course.aggregate([
+    const courseInstances = await Course.aggregate([
       {
         $match: {
-          _id: req.params.courseId,
+          "instances._id": req.params.instanceId,
         },
       },
       {
@@ -78,23 +78,27 @@ router.get("/:courseId/:instanceId", async function (req, res) {
           _id: 1,
           name: 1,
           nameEng: 1,
+          extent: 1,
+          date: 1,
+          extentUnit: 1,
           instances: {
             $filter: {
               input: "$instances",
               as: "instance",
               cond: {
-                $eq: [req.params.instanceId, "$$instance._id"],
+                $in: [req.params.instanceId, "$$instance._id"],
               },
             },
           },
         },
       },
-    ])
+    ]);
+    console.log(course);
     if (course && course[0].instances[0]) {
       res.json({
         name: course[0].name,
         courseId: course[0]._id,
-        ...course[0].instances[0]
+        ...course[0].instances[0],
       });
     } else res.status(404).json({ message: "The requested instance was not found", detail: "No match" });
   } catch (err) {
@@ -140,7 +144,7 @@ router.post(
           "instances._id": instanceID,
         });
 
-        Course.findOneAndUpdate(
+        await Course.findOneAndUpdate(
           {
             _id: courseID,
             "instances._id": instanceID,
@@ -202,7 +206,7 @@ router.post(
           questions: questions,
         });
         //Push a new report to the "reports"-array
-        Course.findOneAndUpdate(
+        var report = await Course.findOneAndUpdate(
           {
             _id: courseID,
             "instances._id": instanceID,
@@ -216,9 +220,9 @@ router.post(
             },
           }
         ).exec();
-
-        const report = await newReport.save();
         res.json(report);
+        //const report = await newReport.save();
+        // res.json(report);
         console.log("Report posted to DB");
       } catch (err) {
         console.error(err.message);
