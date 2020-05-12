@@ -9,8 +9,8 @@ if (fs.existsSync("raw.json")) {
   jsonData = JSON.parse(fs.readFileSync("raw.json")).return;
   formatSave();
 } else {
-  soap.createClient(url, function(err, client) {
-    client.sokKursTillfalleKurspaket(args, function(err, result) {
+  soap.createClient(url, function (err, client) {
+    client.sokKursTillfalleKurspaket(args, function (err, result) {
       if (result.return) {
         jsonData = result.return;
         formatSave();
@@ -43,7 +43,7 @@ function formatSave() {
     dataObj[id].instances.push({
       date: source.period,
       instanceId: source.anmalningskod,
-      _id: source.id,
+      _id: parseInt(source.id),
       responsible: [],
       report: []
     });
