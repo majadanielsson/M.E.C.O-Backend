@@ -1,5 +1,5 @@
 const fs = require("fs");
-const soap = require('soap');
+//const soap = require('soap');
 const url = 'http://ws.selma7.its.uu.se/selmaws-uu/services/TillfalleTjanst?wsdl';
 var jsonData;
 var args = {
@@ -24,29 +24,30 @@ function formatSave() {
   for (var i = 0; i < jsonData.length; i++) {
     var source = jsonData[i];
     var id = source.kurskod;
-    if (!dataObj[id]) dataObj[id] = {
-      _id: id,
-      name: source.namn,
-      nameEng: source.namnEng,
-      date: source.period,
-      extent: source.omfattningsvarde,
-      extentUnit: source.omfattningsenhet,
-      instances: []
+    if (id) {
+      if (!dataObj[id]) dataObj[id] = {
+        _id: id,
+        name: source.namn,
+        nameEng: source.namnEng,
+        date: source.period,
+        extent: source.omfattningsvarde,
+        extentUnit: source.omfattningsenhet,
+        instances: []
+      }
+      if (dataObj[id].date < source.period) {
+        dataObj[id].name = source.namn;
+        dataObj[id].nameEng = source.namnEng;
+        dataObj[id].date = source.period;
+        dataObj[id].extent = source.omfattningsvarde;
+        dataObj[id].extentUnit = source.omfattningsenhet;
+      }
+      dataObj[id].instances.push({
+        date: source.period,
+        _id: source.period.substring(0, 4) + source.anmalningskod,
+        responsible: [],
+        report: []
+      });
     }
-    if (dataObj[id].date < source.period) {
-      dataObj[id].name = source.namn;
-      dataObj[id].nameEng = source.namnEng;
-      dataObj[id].date = source.period;
-      dataObj[id].extent = source.omfattningsvarde;
-      dataObj[id].extentUnit = source.omfattningsenhet;
-    }
-    dataObj[id].instances.push({
-      date: source.period,
-      instanceId: source.anmalningskod,
-      _id: parseInt(source.id),
-      responsible: [],
-      report: []
-    });
   }
   fs.writeFileSync("data.json", JSON.stringify(Object.values(dataObj)));
 }

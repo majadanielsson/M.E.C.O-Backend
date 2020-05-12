@@ -29,7 +29,7 @@ const CourseSchema = new mongoose.Schema({
   },
   instances: [
     {
-      _id: Number,
+      _id: String,
       date: String,
       responsible: [String],
       report: [Report],
