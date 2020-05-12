@@ -33,6 +33,7 @@ const CourseSchema = new mongoose.Schema({
       date: String,
       responsible: [String],
       report: [Report],
+      evaluation: [{ _id: Number, answers: { "0": Number, "1": Number, "2": Number, "3": Number, "4": Number, "5": Number } }]
     },
   ],
 });
