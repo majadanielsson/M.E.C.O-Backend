@@ -6,6 +6,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var bodyParser = require("body-parser");
+const fileUpload = require('express-fileupload');
 const authentication = require("./middleware/authentication.js");
 var cors = require("./middleware/cors.js");
 var db = require("./mongoose.js");
@@ -15,6 +16,7 @@ var usersRouter = require("./routes/users");
 var casRouter = require("./routes/cas");
 var searchRouter = require("./routes/search");
 var formRouter = require("./routes/courseInstance");
+var csvRouter = require("./routes/csv");
 
 var app = express();
 
@@ -23,7 +25,9 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
 app.use(logger("dev"));
-
+app.use(fileUpload({
+  limits: { fileSize: 10 * 1024 * 1024 },
+}));
 app.use(express.json());
 app.use(
   express.urlencoded({
@@ -41,6 +45,7 @@ app.use("/users", usersRouter);
 app.use("/cas", casRouter);
 app.use("/search", searchRouter);
 app.use("/courses", formRouter);
+app.use("/csv", csvRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
