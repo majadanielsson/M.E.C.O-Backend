@@ -101,7 +101,6 @@ router.post(
       .blacklist(blacklist)
       .isLength({
         min: 1,
-        max: 100,
       }),
   ],
   async (req, res, next) => {
@@ -162,7 +161,6 @@ router.post(
       .blacklist(blacklist)
       .isLength({
         min: 1,
-        max: 10,
       }),
   ],
   async (req, res, next) => {
