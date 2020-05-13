@@ -11,28 +11,36 @@ router.post("/", async function (req, res) {
             const courseId = data[i]["0"];
             const instanceId = data[i]["1"] + "-" + data[i]["2"];
             var evaluation = [];
-            if (data[i]["4"] || data[i]["5"] || data[i]["6"] || data[i]["7"] || data[i]["8"] || data[i]["9"]) evaluation.push({
-                _id: 0,
-                answers: {
+            if (data[i]["4"] || data[i]["5"] || data[i]["6"] || data[i]["7"] || data[i]["8"] || data[i]["9"]) {
+                var element = {};
+                element._id = 0;
+                element.answers = {
                     "0": data[i]["4"] ? parseInt(data[i]["4"]) : 0,
                     "1": data[i]["5"] ? parseInt(data[i]["5"]) : 0,
                     "2": data[i]["6"] ? parseInt(data[i]["6"]) : 0,
                     "3": data[i]["7"] ? parseInt(data[i]["7"]) : 0,
                     "4": data[i]["8"] ? parseInt(data[i]["8"]) : 0,
                     "5": data[i]["9"] ? parseInt(data[i]["9"]) : 0
-                }
-            });
-            if (data[i]["11"] || data[i]["12"] || data[i]["13"] || data[i]["14"] || data[i]["15"] || data[i]["16"]) evaluation.push({
-                _id: 1,
-                answers: {
-                    "0": data[i]["11"] ? parseInt(data[i]["11"]) : 0,
-                    "1": data[i]["12"] ? parseInt(data[i]["12"]) : 0,
-                    "2": data[i]["13"] ? parseInt(data[i]["13"]) : 0,
-                    "3": data[i]["14"] ? parseInt(data[i]["14"]) : 0,
-                    "4": data[i]["15"] ? parseInt(data[i]["15"]) : 0,
-                    "5": data[i]["16"] ? parseInt(data[i]["16"]) : 0
-                }
-            });
+                };
+                element.average = (element.answers["1"] + 2 * element.answers["2"] + 3 * element.answers["3"] + 4 * element.answers["4"] + 5 * element.answers["5"]) / Object.values({ ...element.answers, "0": 0 }).reduce((a, b) => a + b);
+                element.total = Object.values(element.answers).reduce((a, b) => a + b);
+                evaluation.push(element);
+            };
+            if (data[i]["11"] || data[i]["12"] || data[i]["13"] || data[i]["14"] || data[i]["15"] || data[i]["16"]) {
+                var element = {};
+                element._id = 1,
+                    element.answers = {
+                        "0": data[i]["11"] ? parseInt(data[i]["11"]) : 0,
+                        "1": data[i]["12"] ? parseInt(data[i]["12"]) : 0,
+                        "2": data[i]["13"] ? parseInt(data[i]["13"]) : 0,
+                        "3": data[i]["14"] ? parseInt(data[i]["14"]) : 0,
+                        "4": data[i]["15"] ? parseInt(data[i]["15"]) : 0,
+                        "5": data[i]["16"] ? parseInt(data[i]["16"]) : 0
+                    }
+                element.average = (element.answers["1"] + 2 * element.answers["2"] + 3 * element.answers["3"] + 4 * element.answers["4"] + 5 * element.answers["5"]) / Object.values({ ...element.answers, "0": 0 }).reduce((a, b) => a + b);
+                element.total = Object.values(element.answers).reduce((a, b) => a + b);
+                evaluation.push(element);
+            };
             if (evaluation.length) formatted.push({
                 courseId: courseId,
                 instanceId: instanceId,
