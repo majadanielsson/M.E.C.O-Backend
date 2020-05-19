@@ -16,6 +16,7 @@ var usersRouter = require("./routes/users");
 var casRouter = require("./routes/cas");
 var searchRouter = require("./routes/search");
 var formRouter = require("./routes/courseInstance");
+var commentsRouter = require("./routes/comments");
 var csvRouter = require("./routes/csv");
 
 var app = express();
@@ -46,6 +47,7 @@ app.use("/cas", casRouter);
 app.use("/search", searchRouter);
 app.use("/courses", formRouter);
 app.use("/csv", csvRouter);
+app.use("/comments", commentsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
