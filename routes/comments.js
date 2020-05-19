@@ -64,35 +64,46 @@ router.patch('/:commentId/:action', async function (req, res) {
     res.status(401).json({ message: "Authentication required" });
     return
   }
-  if (!["up", "down"].includes(req.params.action)) {
-    res.status(404).json({ message: "Incorrect request" });
-    return
-  }
 
+  var update;
+  switch (req.params.action) {
+    case "up":
+      update = {
+        $addToSet: {
+          "votes.up": hash
+        },
+        $pull: {
+          "votes.down": hash
+        }
+      }
+      break
+    case "down":
+      update = {
+        $addToSet: {
+          "votes.down": hash
+        },
+        $pull: {
+          "votes.up": hash
+        }
+      }
+      break
+    case "clear":
+      update = {
+        $addToSet: {
+          "votes.down": hash
+        },
+        $pull: {
+          "votes.up": hash
+        }
+      }
+      break
+    default:
+      res.status(404).json({ message: "Incorrect request" });
+      return
+  }
   var hash = crypto.createHmac('sha256', secret)
     .update('req.user.username')
     .digest('hex');
-  var update;
-  if (req.params.action == "up") {
-    update = {
-      $addToSet: {
-        "votes.up": hash
-      },
-      $pull: {
-        "votes.down": hash
-      }
-    }
-  }
-  else {
-    update = {
-      $addToSet: {
-        "votes.down": hash
-      },
-      $pull: {
-        "votes.up": hash
-      }
-    }
-  }
   try {
     var comment = await Comment.findOneAndUpdate({ _id: req.params.commentId }, update, { new: true });
     res.json({ _id: comment._id, votes: comment.votes });
