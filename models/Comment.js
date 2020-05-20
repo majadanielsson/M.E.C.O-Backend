@@ -22,7 +22,9 @@ const CommentSchema = new mongoose.Schema({
     up: [String],
     down: [String],
   },
-  flag: Boolean
+  flag: {
+    type: [String],
+  }
 });
 
 CommentSchema.index({
