@@ -42,6 +42,7 @@ CourseSchema.index({
   name: "text",
   nameEng: "text",
   responsible: 1,
+  "instances._id": 1
 });
 
 module.exports = Report = mongoose.model("course", CourseSchema);
