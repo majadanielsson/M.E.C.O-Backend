@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
+const dbName = "test";
 mongoose.set('useCreateIndex', true);
 mongoose.connect(
-  `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@meco-ju6ws.mongodb.net/test?retryWrites=true&w=majority`,
+  `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@meco-ju6ws.mongodb.net/${dbName}?retryWrites=true&w=majority`,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,

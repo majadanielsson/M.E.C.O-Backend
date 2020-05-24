@@ -41,8 +41,12 @@ const CourseSchema = new mongoose.Schema({
 CourseSchema.index({
   name: "text",
   nameEng: "text",
-  responsible: 1,
-  "instances._id": 1
+});
+CourseSchema.index({
+  "instances.responsible": 1,
+});
+CourseSchema.index({
+  "instances._id": 1,
 });
 
 module.exports = Report = mongoose.model("course", CourseSchema);

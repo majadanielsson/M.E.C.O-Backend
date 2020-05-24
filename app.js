@@ -18,6 +18,7 @@ var searchRouter = require("./routes/search");
 var formRouter = require("./routes/courseInstance");
 var commentsRouter = require("./routes/comments");
 var csvRouter = require("./routes/csv");
+var selmaRouter = require("./routes/selma");
 
 var app = express();
 
@@ -48,6 +49,7 @@ app.use("/search", searchRouter);
 app.use("/courses", formRouter);
 app.use("/csv", csvRouter);
 app.use("/comments", commentsRouter);
+app.use("/selma", selmaRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
