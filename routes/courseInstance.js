@@ -47,8 +47,9 @@ router.get("/:courseId?", async function (req, res, next) {
 
       res.json(courseInstances);
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
       res.status(500).send("Server Error");
+      return
     }
   } else if (courseID) {
     try {
@@ -58,9 +59,9 @@ router.get("/:courseId?", async function (req, res, next) {
       if (!course) res.status(404).json({ message: "Not found", detail: "No match for ID" });
       res.json(course);
     } catch (err) {
-      console.error(err.message);
-
+      console.error(err);
       res.status(500).send("Server Error");
+      return
     }
   }
 });
@@ -84,70 +85,15 @@ router.get("/:courseId/:instanceId", async function (req, res) {
         name: course[0].name,
         courseId: course[0]._id,
       });
-    } else res.status(404).json({ message: "The requested instance was not found", detail: "No match" });
+    } else res.status(404).json({ message: "Not found" });
   } catch (err) {
     res
       .status(500)
-      .json({ message: "Something went wrong", detail: "Server error" });
+      .json({ message: "Server error" });
+    return
   }
 });
 
-router.post(
-  "/:courseId/:instanceId/comment",
-  [
-    body("comment", "Invalid input")
-      .trim()
-      .escape()
-      .blacklist(blacklist)
-      .isLength({
-        min: 1,
-      }),
-  ],
-  async (req, res, next) => {
-    // Extract the validation errors from a request.
-    const errors = validationResult(req);
-    var courseID = req.params.courseId;
-    var instanceID = req.params.instanceId;
-    var comment = req.body.comment;
-
-    if (!errors.isEmpty()) {
-      // There are errors. Render form again with sanitized values/errors messages.
-      // Error messages can be returned in an array using `errors.array()`.
-      console.log("Found validation errors");
-      return res.status(422).json({
-        errors: errors.array(),
-      });
-    } else {
-      // Data from form is valid. Store in database
-      console.log(req.body);
-      // Add comment to the comments-array of the latest report in instances
-      try {
-        var reportID = Course.find({
-          _id: courseID,
-          "instances._id": instanceID,
-        });
-
-        await Course.findOneAndUpdate(
-          {
-            _id: courseID,
-            "instances._id": instanceID,
-          },
-          {
-            $push: {
-              "instances.$.report.0.comments": comment,
-            },
-          }
-        ).exec();
-
-        res.json(comment);
-        console.log("Comment posted to report");
-      } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server Error");
-      }
-    }
-  }
-);
 
 // @route    POST api/users
 // @desc     Posts form
@@ -213,5 +159,63 @@ router.post(
     }
   }
 );
+
+/*
+router.post(
+  "/:courseId/:instanceId/comment",
+  [
+    body("comment", "Invalid input")
+      .trim()
+      .escape()
+      .blacklist(blacklist)
+      .isLength({
+        min: 1,
+      }),
+  ],
+  async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+    var courseID = req.params.courseId;
+    var instanceID = req.params.instanceId;
+    var comment = req.body.comment;
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/errors messages.
+      // Error messages can be returned in an array using `errors.array()`.
+      console.log("Found validation errors");
+      return res.status(422).json({
+        errors: errors.array(),
+      });
+    } else {
+      // Data from form is valid. Store in database
+      console.log(req.body);
+      // Add comment to the comments-array of the latest report in instances
+      try {
+        var reportID = Course.find({
+          _id: courseID,
+          "instances._id": instanceID,
+        });
+
+        await Course.findOneAndUpdate(
+          {
+            _id: courseID,
+            "instances._id": instanceID,
+          },
+          {
+            $push: {
+              "instances.$.report.0.comments": comment,
+            },
+          }
+        ).exec();
+
+        res.json(comment);
+        console.log("Comment posted to report");
+      } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
+      }
+    }
+  }
+);*/
 
 module.exports = router;
