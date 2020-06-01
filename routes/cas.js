@@ -5,18 +5,18 @@ const cas = "https://weblogin.uu.se/idp/profile/cas"; // CAS server URL
 const querystring = require('querystring');
 var jwt = require('jsonwebtoken');
 
-router.get('/login', function(req, res) {
-  if (req.user) res.json({
-    username: req.user.username
-  });
-  else res.status(403).json({
-    message: "Invalid authentication",
-    detail: "Invalid JWT token"
-  });
+
+// Create fake JWT
+// DELETE IN PRODUCTION
+router.post('/dev', function (req, res) {
+  var token = jwt.sign(req.body, process.env.JWT_SECRET);
+  res.cookie('access_token', `Bearer ${token}`).json(req.body);
 });
 
-// Checks the ticket against the CAS server, returns JWT
-router.post('/login', function(req, res) {
+// @route     POST /cas/login
+// @desc      Checks the ticket against the CAS server, returns JWT
+// @access    Public
+router.post('/login', function (req, res) {
   if (!req.body.ticket) res.status(400).json({
     message: "Not logged in",
     detail: "Missing ticket"
@@ -56,14 +56,10 @@ router.post('/login', function(req, res) {
     })
 });
 
-// Redirects to CAS logout page
-router.get('/logout', function(req, res) {
+// @route     POST /cas/login
+// @desc      Deletes JWT cookie, redirect to CAS server logout page is neccesary
+// @access    Public
+router.get('/logout', function (req, res) {
   res.clearCookie("access_token").end();
-});
-
-// Create fake JWT
-router.post('/dev', function(req, res) {
-  var token = jwt.sign(req.body, process.env.JWT_SECRET);
-  res.cookie('access_token', `Bearer ${token}`).json(req.body);
 });
 module.exports = router;

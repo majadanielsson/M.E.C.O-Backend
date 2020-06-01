@@ -1,18 +1,21 @@
 var createError = require("http-errors");
 var express = require("express");
+var path = require("path");
+
 // Adds environment variables, only in development
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
-var path = require("path");
+
+// Connects to database
+var db = require("./mongoose")
+
+// Middleware
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-var bodyParser = require("body-parser");
 const fileUpload = require('express-fileupload');
 const authentication = require("./middleware/authentication.js");
 var cors = require("./middleware/cors.js");
-var db = require("./mongoose.js");
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+// Routes
 var casRouter = require("./routes/cas");
 var searchRouter = require("./routes/search");
 var formRouter = require("./routes/courseInstance");
@@ -22,28 +25,27 @@ var selmaRouter = require("./routes/selma");
 
 var app = express();
 
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
-
+// Request log middleware
 app.use(logger("dev"));
+
+// File upload middleware - adds files to req.files
 app.use(fileUpload({
   limits: { fileSize: 10 * 1024 * 1024 },
 }));
+
+// JSON parser middleware - adds POST data to req.body
 app.use(express.json());
-app.use(
-  express.urlencoded({
-    extended: false,
-  })
-);
+
+// Cookie parser middleware - adds cookies to req.cookies
 app.use(cookieParser());
-// Allow localhost
+
+// CORS middleware
 app.use(cors());
-app.use(express.static(path.join(__dirname, "public")));
-// Adds user info to req.user
+
+// JWT Decode middleware - adds user info to req.user
 app.use(authentication());
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
+
+// Routes
 app.use("/cas", casRouter);
 app.use("/search", searchRouter);
 app.use("/courses", formRouter);
@@ -64,7 +66,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.end();
 });
 
 module.exports = app;
