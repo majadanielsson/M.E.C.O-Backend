@@ -57,7 +57,7 @@ router.post('/login', function (req, res) {
 });
 
 // @route     POST /cas/login
-// @desc      Deletes JWT cookie, redirect to CAS server logout page is neccesary
+// @desc      Deletes JWT cookie, does not redirect to CAS server logout page
 // @access    Public
 router.get('/logout', function (req, res) {
   res.clearCookie("access_token").end();

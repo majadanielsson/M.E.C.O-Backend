@@ -48,7 +48,7 @@ router.get("/:courseId?", async function (req, res, next) {
       res.json(courseInstances);
     } catch (err) {
       console.error(err);
-      res.status(500).send("Server Error");
+      res.status(500).json({ message: "Server Error" });
       return
     }
   } else if (courseID) {
@@ -60,7 +60,7 @@ router.get("/:courseId?", async function (req, res, next) {
       res.json(course);
     } catch (err) {
       console.error(err);
-      res.status(500).send("Server Error");
+      res.status(500).json({ message: "Server Error" });
       return
     }
   }
@@ -154,7 +154,7 @@ router.post(
         console.log("Report posted to DB");
       } catch (err) {
         console.error(err.message);
-        res.status(500).send("Server Error");
+        res.status(500).json({ message: "Server error" });
       }
     }
   }
