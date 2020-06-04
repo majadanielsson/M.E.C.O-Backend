@@ -54,8 +54,14 @@ router.get("/:courseId?", async function (req, res, next) {
   } else if (courseID) {
     try {
       // Get all documents in Course
-
-      const course = await Course.findById(courseID);
+      var project = {};
+      if (req.query.meta == "true") {
+        project = {
+          "instances.report": 0,
+          "instances.evaluation": 0
+        }
+      }
+      const course = await Course.findById(courseID, project);
       if (!course) res.status(404).json({ message: "Not found", detail: "No match for ID" });
       res.json(course);
     } catch (err) {
