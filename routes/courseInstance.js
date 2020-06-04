@@ -160,6 +160,41 @@ router.post(
   }
 );
 
+router.post("/:courseId/:instanceId/evaluation", async (req, res) => {
+  try {
+    if (!req.body.length) {
+      res.status(400).json({ message: "Missing data" });
+    }
+    var questions = [];
+    for (var i in req.body) {
+      var element = {};
+      element._id = req.body[i]._id;
+      element.answers = req.body[i].answers;
+      var divideBy = Object.values({ ...element.answers, "0": 0 }).reduce((a, b) => a + b);
+      element.average = (element.answers["1"] + 2 * element.answers["2"] + 3 * element.answers["3"] + 4 * element.answers["4"] + 5 * element.answers["5"]) / (isNaN(divideBy) ? 1 : divideBy);
+      element.total = Object.values(element.answers).reduce((a, b) => a + b);
+      if (element.total > 0) questions.push(element); else {
+        res.status(400).json({ message: "Contains question without answers" });
+      }
+    }
+    await Course.findOneAndUpdate(
+      {
+        _id: req.params.courseId,
+        "instances._id": req.params.instanceId,
+      },
+      {
+        $set: {
+          "instances.$.evaluation": questions,
+        },
+      }
+    ).exec();
+    res.json({ message: "Success" });
+  }
+  catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" })
+  }
+})
 /*
 router.post(
   "/:courseId/:instanceId/comment",
