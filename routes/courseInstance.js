@@ -48,19 +48,29 @@ router.get("/:courseId?", async function (req, res, next) {
       res.json(courseInstances);
     } catch (err) {
       console.error(err);
-      res.status(500).send("Server Error");
-      return
+      res.status(500).json({ message: "Server Error" });
+      return;
     }
   } else if (courseID) {
     try {
       // Get all documents in Course
-      const course = await Course.findById(courseID);
-      if (!course) res.status(404).json({ message: "Not found", detail: "No match for ID" });
+      var project = {};
+      if (req.query.meta == "true") {
+        project = {
+          "instances.report": 0,
+          "instances.evaluation": 0,
+        };
+      }
+      const course = await Course.findById(courseID, project);
+      if (!course)
+        res
+          .status(404)
+          .json({ message: "Not found", detail: "No match for ID" });
       res.json(course);
     } catch (err) {
       console.error(err);
-      res.status(500).send("Server Error");
-      return
+      res.status(500).json({ message: "Server Error" });
+      return;
     }
   }
 });
@@ -86,13 +96,10 @@ router.get("/:courseId/:instanceId", async function (req, res) {
       });
     } else res.status(404).json({ message: "Not found" });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Server error" });
-    return
+    res.status(500).json({ message: "Server error" });
+    return;
   }
 });
-
 
 // @route    POST api/users
 // @desc     Posts form
@@ -153,12 +160,55 @@ router.post(
         console.log("Report posted to DB");
       } catch (err) {
         console.error(err.message);
-        res.status(500).send("Server Error");
+        res.status(500).json({ message: "Server error" });
       }
     }
   }
 );
 
+router.post("/:courseId/:instanceId/evaluation", async (req, res) => {
+  try {
+    if (!req.body.length) {
+      res.status(400).json({ message: "Missing data" });
+    }
+    var questions = [];
+    for (var i in req.body) {
+      var element = {};
+      element._id = req.body[i]._id;
+      element.answers = req.body[i].answers;
+      var divideBy = Object.values({ ...element.answers, "0": 0 }).reduce(
+        (a, b) => a + b
+      );
+      element.average =
+        (element.answers["1"] +
+          2 * element.answers["2"] +
+          3 * element.answers["3"] +
+          4 * element.answers["4"] +
+          5 * element.answers["5"]) /
+        (isNaN(divideBy) ? 1 : divideBy);
+      element.total = Object.values(element.answers).reduce((a, b) => a + b);
+      if (element.total > 0) questions.push(element);
+      else {
+        res.status(400).json({ message: "Contains question without answers" });
+      }
+    }
+    await Course.findOneAndUpdate(
+      {
+        _id: req.params.courseId,
+        "instances._id": req.params.instanceId,
+      },
+      {
+        $set: {
+          "instances.$.evaluation": questions,
+        },
+      }
+    ).exec();
+    res.json({ message: "Success" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 /*
 router.post(
   "/:courseId/:instanceId/comment",

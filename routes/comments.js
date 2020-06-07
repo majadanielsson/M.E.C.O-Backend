@@ -19,7 +19,7 @@ function formatComment(comment) {
 // @route     GET /comments/
 // @desc      Get all comments with filtering
 //            with query flag=true returns all reported comments
-// @access    EMPLOYEE
+// @access    Employee
 // TODO - ROLES
 router.get("/", async function (req, res) {
   try {
@@ -44,7 +44,7 @@ router.get("/", async function (req, res) {
 
 // @route     GET /comments/:instanceId
 // @desc      Get comments for course instance
-// @access    PUBLIC
+// @access    Public
 router.get('/:instanceId', async function (req, res) {
   try {
     var comments = await Comment.find({ instanceId: req.params.instanceId }, { comment: 1, votes: 1, date: 1 });
@@ -59,7 +59,7 @@ router.get('/:instanceId', async function (req, res) {
 
 // @route   POST /comments/:courseId/:instanceId
 // @desc    Write a comment
-// @access  AUTHENTICATED
+// @access  Authenticated
 router.post('/:courseId/:instanceId', async function (req, res) {
   try {
     if (!req.user) {
@@ -112,7 +112,7 @@ router.post('/:courseId/:instanceId', async function (req, res) {
 
 // @route     PATCH /comments/:commentId/:action
 // @desc      Vote, flag, unvote or unflag a comment
-// @access    AUTHENTICATED
+// @access    Authenticated
 router.patch('/:commentId/:action', async function (req, res) {
   try {
     if (!req.user) {
@@ -184,7 +184,7 @@ router.patch('/:commentId/:action', async function (req, res) {
 
 // @route     DELETE /comments/:commentId
 // @desc      Deletes a comment
-// @access    EMPLOYEE
+// @access    Employee
 // TODO - ROLES
 router.delete("/:commentId", async function (req, res) {
   try {
@@ -206,7 +206,7 @@ router.delete("/:commentId", async function (req, res) {
 
 // @route     PUT /comments/:commentId/ban
 // @desc      Bans the writer of a comment for 30 days
-// @access    EMPLOYEE
+// @access    Employee
 // TODO - ROLES
 router.put("/:commentId/ban", async function (req, res) {
   try {
