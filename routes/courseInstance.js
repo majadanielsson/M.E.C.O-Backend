@@ -54,7 +54,6 @@ router.get("/:courseId?", async function (req, res, next) {
   } else if (courseID) {
     try {
       // Get all documents in Course
-
       const course = await Course.findById(courseID);
       if (!course) res.status(404).json({ message: "Not found", detail: "No match for ID" });
       res.json(course);
